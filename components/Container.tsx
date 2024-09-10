@@ -31,14 +31,20 @@ const Container = () => {
 
   const [activeId, setActiveId] = useState<UniqueIdentifier>();
 
-  const [nextId, setNewId] = useState(1);
+  const [newTask, setNewTask] = useState("");
 
-  const [newTask, setNewTask] = useState(null);
-
-  const addTask = () => {
-    if (!newTask) return;
-    console.log("newTask")
-}
+  const addTask = (event) => {
+    event.preventDefault();  // Prevent the form from causing a page reload
+    if (!newTask) return;    // Check if the input is not empty
+    setItems(prevItems => {
+        return {
+            ...prevItems,
+            container1: [...prevItems.container1, newTask]  // Append new task to container1
+        };
+    });
+    setNewTask('');  // Reset newTask to empty for new input
+    console.log("Task Added:", newTask);  // Log the added task
+};
 
  
   const sensors = useSensors(
@@ -168,8 +174,8 @@ const Container = () => {
         onDragEnd={handleDragEnd}
       >
         {/* SortableContainer */}
-        <div className='w-1/3 block p-2 border-2 border-gray-500/75 m-2'>
-        <form onSubmit={addTask} className="w-full mb-4">
+        <div className='w-1/3 block p-2 '>
+        <form onSubmit={addTask} className="w-full">
             <input
                 type="text"
                 value={newTask}
@@ -177,7 +183,7 @@ const Container = () => {
                 placeholder="Enter a new task"
                 className="w-full p-3 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <button type="submit" className="mt-3 w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300">
+            <button type="submit" className="mt-3 w-full bg-blue-500 text-white p-3 rounded-lg">
                 Add Task
             </button>
         </form>
@@ -185,28 +191,33 @@ const Container = () => {
             id="container1"
             items={items.container1}
             label="Unassigned"
+            color="bg-white"
             />
         </div>
-        <div className='w-2/3 grid grid-cols-2 gap-4 p-2 border-2 border-gray-500/75 m-2'>
+        <div className='w-2/3 grid grid-cols-2 m-2'>
             <SortableContainer
             id="container2"
             label="Important, Not Urgent"
             items={items.container2}
+            color="bg-orange-500"
             />
             <SortableContainer
             id="container3"
             label="Important, Urgent"
             items={items.container3}
+            color="bg-red-500"
             />
             <SortableContainer
             id="container4"
             label="Not Important, Not Urgent"
             items={items.container4}
+            color="bg-green-500"
             />
             <SortableContainer
             id="container5"
             label="Not Important, Urgent"
             items={items.container5}
+            color="bg-blue-500"
             />
         </div>
         {/* DragOverlay */}
