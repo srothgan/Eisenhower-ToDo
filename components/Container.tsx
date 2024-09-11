@@ -276,12 +276,13 @@ const Container = () => {
       >
         {/* SortableContainer */}
         <div className='w-1/3 block p-2 '>
-        <form onSubmit={addTask} className="w-full flex gap-4">
+        <h3 className="text-xl font-bold text-center">Create new Task</h3>
+        <form onSubmit={addTask} className="w-full flex gap-4 pt-2">
             <input
                 type="text"
                 value={newTask}
                 onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Enter a new task"
+                placeholder="Enter a name"
                 className="w-full p-3 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             />
             <input
