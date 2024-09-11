@@ -6,12 +6,14 @@ const SortableContainer = ({
   id,
   items,
   label,
-  color
+  color,
+  height
 }: {
   id: string;
   items: string[];
   label: string;
   color: string;
+  height : string
 }) => {
   const { setNodeRef } = useDroppable({
     id,
@@ -25,7 +27,7 @@ const SortableContainer = ({
       <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
         <div
           ref={setNodeRef}
-          className="w-full h-[250px] overflow-auto"
+          className={`w-full${height} overflow-auto`}
         >
           {items.map((id: string) => (
             <SortableItem key={id} id={id} />

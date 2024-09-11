@@ -16,7 +16,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import SortableContainer from "./SortableContainer";
 import Item from "./Item";
-
+import { FaPlus } from "react-icons/fa6";
 const Container = () => {
  
   const [items, setItems] = useState<{
@@ -175,7 +175,7 @@ const Container = () => {
       >
         {/* SortableContainer */}
         <div className='w-1/3 block p-2 '>
-        <form onSubmit={addTask} className="w-full">
+        <form onSubmit={addTask} className="w-full flex gap-4">
             <input
                 type="text"
                 value={newTask}
@@ -183,8 +183,8 @@ const Container = () => {
                 placeholder="Enter a new task"
                 className="w-full p-3 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <button type="submit" className="mt-3 w-full bg-blue-500 text-white p-3 rounded-lg">
-                Add Task
+            <button type="submit" className="w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 rounded-lg">
+                <FaPlus/>
             </button>
         </form>
             <SortableContainer
@@ -192,32 +192,37 @@ const Container = () => {
             items={items.container1}
             label="Unassigned"
             color="bg-white"
+            height=" h-[550px]"
             />
         </div>
-        <div className='w-2/3 grid grid-cols-2 m-2'>
+        <div className='w-2/3 grid grid-cols-2 m-2 rounded-xl'>
             <SortableContainer
             id="container2"
             label="Important, Not Urgent"
             items={items.container2}
-            color="bg-orange-500"
+            color="bg-modern-orange"
+            height=" h-[250px]"
             />
             <SortableContainer
             id="container3"
             label="Important, Urgent"
             items={items.container3}
-            color="bg-red-500"
+            color="bg-modern-red"
+            height=" h-[250px]"
             />
             <SortableContainer
             id="container4"
             label="Not Important, Not Urgent"
             items={items.container4}
-            color="bg-green-500"
+            color="bg-modern-green"
+            height=" h-[250px]"
             />
             <SortableContainer
             id="container5"
             label="Not Important, Urgent"
             items={items.container5}
-            color="bg-blue-500"
+            color="bg-modern-blue"
+            height=" h-[250px]"
             />
         </div>
         {/* DragOverlay */}
