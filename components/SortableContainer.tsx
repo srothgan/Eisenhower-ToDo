@@ -10,7 +10,7 @@ const SortableContainer = ({
   height
 }: {
   id: string;
-  items: string[];
+  items: { id: string; name: string; date: string; note: string }[]; // Updated type for items
   label: string;
   color: string;
   height : string
@@ -24,13 +24,16 @@ const SortableContainer = ({
         <h3 className="text-xl font-bold text-center">{label}</h3>
       </div>
       
-      <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
-        <div
-          ref={setNodeRef}
-          className={`w-full${height} overflow-auto`}
-        >
-          {items.map((id: string) => (
-            <SortableItem key={id} id={id} />
+      <SortableContext id={id} items={items.map((item) => item.id)} strategy={rectSortingStrategy}>
+        <div ref={setNodeRef} className={`w-full ${height} overflow-auto`}>
+          {items.map((item) => (
+            <SortableItem 
+              key={item.id} 
+              id={item.id} 
+              name={item.name} 
+              note={item.note} 
+              date={item.date} 
+            />
           ))}
         </div>
       </SortableContext>
