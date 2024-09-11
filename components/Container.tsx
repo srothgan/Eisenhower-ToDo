@@ -251,7 +251,20 @@ const Container = () => {
     setActiveId(undefined); // Clear activeId after the drag ends
   };
   
+  const deleteItem = (id: string) => {
+    setItems((prevItems) => {
+      const containerKey = findContainer(id);  // Find which container the item belongs to
+      if (!containerKey) return prevItems;
   
+      // Filter out the item with the given ID
+      const updatedContainer = prevItems[containerKey].filter(item => item.id !== id);
+  
+      return {
+        ...prevItems,
+        [containerKey]: updatedContainer,  // Update the container with the filtered items
+      };
+    });
+  };
   return (
     <div className="flex flex-row mx-auto">
       <DndContext
@@ -288,6 +301,7 @@ const Container = () => {
             label="Unassigned"
             color="bg-white"
             height=" h-[550px]"
+            deleteItem={deleteItem}  
             />
         </div>
         <div className='w-2/3 grid grid-cols-2 m-2 rounded-xl'>
@@ -297,6 +311,7 @@ const Container = () => {
             items={items.container2}
             color="bg-modern-orange"
             height=" h-[250px]"
+            deleteItem={deleteItem}  
             />
             <SortableContainer
             id="container3"
@@ -304,6 +319,7 @@ const Container = () => {
             items={items.container3}
             color="bg-modern-red"
             height=" h-[250px]"
+            deleteItem={deleteItem}  
             />
             <SortableContainer
             id="container4"
@@ -311,6 +327,7 @@ const Container = () => {
             items={items.container4}
             color="bg-modern-green"
             height=" h-[250px]"
+            deleteItem={deleteItem}  
             />
             <SortableContainer
             id="container5"
@@ -318,6 +335,7 @@ const Container = () => {
             items={items.container5}
             color="bg-modern-blue"
             height=" h-[250px]"
+            deleteItem={deleteItem}  
             />
         </div>
         {/* DragOverlay */}
@@ -328,6 +346,7 @@ const Container = () => {
               name={activeItem.name}
               note={activeItem.note}
               date={activeItem.date}
+              deleteItem={deleteItem}
             />
           ) : null}
         </DragOverlay>

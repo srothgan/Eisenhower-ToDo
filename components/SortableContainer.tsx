@@ -7,13 +7,15 @@ const SortableContainer = ({
   items,
   label,
   color,
-  height
+  height,
+  deleteItem  
 }: {
   id: string;
   items: { id: string; name: string; date: string; note: string }[]; // Updated type for items
   label: string;
   color: string;
-  height : string
+  height : string;
+  deleteItem: (id: string) => void;  // Add deleteItem function type
 }) => {
   const { setNodeRef } = useDroppable({
     id,
@@ -33,6 +35,7 @@ const SortableContainer = ({
               name={item.name} 
               note={item.note} 
               date={item.date} 
+              deleteItem={deleteItem}
             />
           ))}
         </div>
