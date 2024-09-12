@@ -1,5 +1,7 @@
 "use client"
 import React, { useState } from "react";
+import axios from 'axios';
+import { signOut, useSession } from "next-auth/react"
 import {
   DndContext,
   DragOverlay,
@@ -17,7 +19,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import SortableContainer from "./SortableContainer";
 import Item from "./Item";
-import { FaPlus } from "react-icons/fa6";
+import { FaRegSave, FaPlus  } from "react-icons/fa";
 import SortableItem from "./SortableItem";
 
 interface TaskItem {
@@ -47,7 +49,7 @@ const Container = () => {
   });
 
   const [activeId, setActiveId] = useState<UniqueIdentifier>();
-
+  const { data: session } = useSession();
   // Find the active item based on the activeId
   const activeItem = activeId
     ? Object.values(items)
@@ -267,8 +269,58 @@ const Container = () => {
       };
     });
   };
+  const saveAllTasks = async (userId) => {
+    // Iterate over each container key in the items object
+    for (const containerKey in items) {
+        if (items.hasOwnProperty(containerKey)) {
+            // Access the array of tasks within the current container
+            const tasks = items[containerKey];
+            // Iterate over each task within the current container
+            for (const task of tasks) {
+                try {
+                    // Construct the request to save the task
+                    const response = await fetch("/api/task", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: task.name,
+                            note: task.note,
+                            date: task.date,
+                            userId: userId,  // User ID from session or passed explicitly
+                            container: containerKey  // Use the key as the container ID
+                        }),
+                    });
+
+                    const result = await response.json();
+                    // Check the response status and handle errors
+                    if (!response.ok) {
+                        throw new Error(result.message || "Failed to save task");
+                    }
+                    console.log("Task saved:", result);
+                } catch (error) {
+                    console.error('Failed to save tasks:', error);
+                    //alert('Error saving tasks.');
+                }
+            }
+        }
+    }
+};
+
   return (
     <div className="flex flex-col w-full p-4">
+      <div className='w-full flex justify-end p-2'>
+        <button onClick={() => {
+    if (session?.user?.id) {
+      saveAllTasks(session.user.id);
+    } else {
+      alert("User ID is not available");
+    }
+  }} type="button" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center gap-2">
+          <p>Save Tasks</p> <FaRegSave/>
+        </button>
+      </div>
       <div className='p-2 block'>
         <h3 className="text-xl font-bold text-center">Create new Task</h3>
         <form onSubmit={addTask} className="w-full flex flex-col md:flex-row gap-4 pt-2">
