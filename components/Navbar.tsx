@@ -19,7 +19,7 @@ const Navbar = () => {
 
   return (
     <section >
-      <div className="flex border-2 border-red-600 items-center justify-between md:hidden p-4 bg-white filter drop-shadow-xl">
+      <div className="flex items-center justify-between md:hidden p-4 bg-white filter drop-shadow-xl">
         <div/>
         <div className="text-xl font-bold">
           <Link href="/">Eisenhower ToDo</Link>

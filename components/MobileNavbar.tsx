@@ -23,7 +23,7 @@ const MobileNavbar = ({ open, toggleMenu, navLinks }) => {
       }, [open]);
 
     return (
-        <div className={`fixed border-2 border-indigo-600 absolute top-0 right-0 h-full w-full bg-white transform ${open ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 ease-in-out filter drop-shadow-md z-100 md:hidden`}>
+        <div className={`fixed absolute top-0 right-0 h-full w-full bg-white transform ${open ? "translate-x-0 " : "translate-x-full hidden"} transition-transform duration-300 ease-in-out filter drop-shadow-md z-100 `}>
             <div className="flex items-center justify-between filter drop-shadow-md bg-white h-20 px-4">
                 <Link href="/" className="text-xl font-semibold">Eisenhower ToDo</Link>
                 <button type="button" onClick={toggleMenu} className="z-50 w-8 h-8">

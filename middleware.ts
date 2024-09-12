@@ -9,9 +9,9 @@ export default withAuth({
 
 // Configure matcher to apply middleware to specific routes
 export const config = {
-  matcher: [
-    '/dashboard/:path*', // Protect the dashboard and any subroutes
-    '/',                 // Protect the home page
-    '/profile/:path*',    // Protect other routes, like the profile page
+  matcher: [ 
+    '/',                 
+    '/personal',    
+    '/about', 
   ],
 };

@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
       <body>
       <AuthProvider>
         <Navbar/>
-        <div className="flex-1">
+        <div className="flex-1 min-h-screen">
               {children}
         </div>
         <Footer/>
