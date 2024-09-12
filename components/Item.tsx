@@ -9,7 +9,7 @@ const Item = ({ id, name, note, date }: {
 }) => {
   return (
     <div className="w-full flex flex-col pl-2">
-      <h4 className="font-semibold">{name}</h4>
+      <p className="text-lg font-semibold">{name}</p>
       <p className="text-xs text-gray-600">Note: {note}</p>
       <p className="text-xs text-gray-500">Created at: {date}</p>
     </div>

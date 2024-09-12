@@ -266,18 +266,10 @@ const Container = () => {
     });
   };
   return (
-    <div className="flex flex-row w-full p-4">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        {/* SortableContainer */}
-        <div className='w-1/3 block p-2 '>
+    <div className="flex flex-col w-full p-4">
+      <div className='p-2 block'>
         <h3 className="text-xl font-bold text-center">Create new Task</h3>
-        <form onSubmit={addTask} className="w-full flex gap-4 pt-2">
+        <form onSubmit={addTask} className="w-full flex flex-col md:flex-row gap-4 pt-2">
             <input
                 type="text"
                 value={newTask}
@@ -292,20 +284,31 @@ const Container = () => {
               placeholder="Enter a note"
               className="w-full p-3 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <button type="submit" className="w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 rounded-lg">
-                <FaPlus/>
+            <button type="submit" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center">
+              <FaPlus/>
             </button>
         </form>
+      </div>  
+      <div className='w-full block md:flex'>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        {/* SortableContainer */}
+        <div className='w-full md:w-1/3 block p-2 '>
             <SortableContainer
             id="container1"
             items={items.container1}
             label="Unassigned"
             color="bg-white"
-            height=" h-[550px]"
+            height="h-[250px] md:h-[550px]"
             deleteItem={deleteItem}  
             />
         </div>
-        <div className='w-2/3 grid grid-cols-2 m-2 rounded-xl'>
+        <div className='w-full md:w-2/3 flex flex-col md:grid grid-cols-2 m-2 rounded-xl'>
             <SortableContainer
             id="container2"
             label="Important, Not Urgent"
@@ -352,6 +355,7 @@ const Container = () => {
           ) : null}
         </DragOverlay>
       </DndContext>
+      </div>
     </div>
   );
 };
