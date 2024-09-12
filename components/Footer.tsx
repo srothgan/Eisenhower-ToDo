@@ -10,20 +10,20 @@ const Footer = () => {
 
 
   return (
-    <section className="bg-slate-200 p-4 text-black">
-      <div className="container mx-auto flex justify-between items-center">
+    <section className="bg-white shadow-[0_-5px_15px_-3px_rgba(0,0,0,0.25)] p-4 text-black">
+      <div className="flex flex-col md:flex-row justify-between items-center">
         {/* Brand Logo */}
-        <div className="text-xl font-bold">
-          <p>Created by Simon Rothgang</p>
+        <div className="text-lg ">
+          <p>Created by Simon Peter Rothgang</p>
         </div>
 
-        <div className="text-xl font-bold">
+        <div className="text-lg mt-4 md:mt-0">
           <p>Hosted on Vercel</p>
         </div>
 
-        <div className="text-xl font-bold flex flex-col">
+        <div className=" flex gap-2 mt-4 md:mt-0">
           <p>Git Repo:</p>
-          <Link href="https://github.com/srothgan/NextJs-Eisenhower-ToDo">Here</Link>
+          <Link className="text-blue-600" href="https://github.com/srothgan/NextJs-Eisenhower-ToDo">Here</Link>
         </div>
 
        
