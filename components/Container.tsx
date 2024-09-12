@@ -12,6 +12,7 @@ import {
   type DragStartEvent,
   type DragOverEvent,
   type DragEndEvent,
+  TouchSensor,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import SortableContainer from "./SortableContainer";
@@ -108,6 +109,7 @@ const Container = () => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -308,7 +310,7 @@ const Container = () => {
             deleteItem={deleteItem}  
             />
         </div>
-        <div className='w-full md:w-2/3 flex flex-col md:grid grid-cols-2 m-2 rounded-xl'>
+        <div className='w-full md:w-2/3 flex flex-col md:grid grid-cols-2 p-2 rounded-xl'>
             <SortableContainer
             id="container2"
             label="Important, Not Urgent"
