@@ -2,3 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.no-scroll {
+    overflow: hidden;
+    height: 100vh; /* Prevents vertical scrolling */
+    width: 100vw; /* Prevents horizontal scrolling */
+    position: fixed; /* Ensures the page layout does not scroll */
+  }

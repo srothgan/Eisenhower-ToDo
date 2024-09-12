@@ -18,17 +18,18 @@ const Navbar = () => {
   const toggleMenu = () => setOpen(!open);
 
   return (
-    <section className="w-full">
-      <div className="flex items-center justify-between md:hidden p-4">
+    <section >
+      <div className="flex border-2 border-red-600 items-center justify-between md:hidden p-4 bg-white filter drop-shadow-xl">
+        <div/>
         <div className="text-xl font-bold">
           <Link href="/">Eisenhower ToDo</Link>
         </div>
         <button type="button" className="z-50 relative w-8 h-8 flex-col justify-between items-center md:hidden" onClick={toggleMenu}>
             {open ? <div/> : <IoMenu className="text-3xl text-black" />}
         </button>
-        <MobileNavbar open={open} toggleMenu={toggleMenu} navLinks={navLinks} />
+        
       </div>
-      
+      <MobileNavbar open={open} toggleMenu={toggleMenu} navLinks={navLinks} />
       
       <div className="hidden md:flex justify-between items-center bg-white filter drop-shadow-xl p-4 text-black w-full">
         <div className="text-xl font-bold">
