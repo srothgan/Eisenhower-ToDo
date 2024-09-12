@@ -10,7 +10,7 @@ const Navbar = () => {
 
 
   return (
-    <section className="bg-blue-600 p-4 text-white">
+    <section className="bg-slate-200 p-4 text-black">
       <div className="container mx-auto flex justify-between items-center">
         {/* Brand Logo */}
         <div className="text-xl font-bold">

@@ -32,7 +32,8 @@ const SignIn = () => {
         const res = await signIn('credentials', {
             email, 
             password, 
-            redirect: false, // Don't redirect automatically
+            redirect: true, // Allow NextAuth.js to handle redirects
+            callbackUrl: '/', // Redirect to homepage after successful sign-in
         });
 
         if (res?.error) {
