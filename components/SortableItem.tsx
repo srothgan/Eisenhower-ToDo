@@ -19,7 +19,7 @@ const SortableItem = ({ id, name, note, date,deleteItem }: {
   return (
     <div
       ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
+      style={{ transform: CSS.Transform.toString(transform), transition, touchAction: 'none' }}
       className="w-full flex items-center justify-between my-2 px-4 py-2 bg-slate-200 h-fit"
     >
       <button type="button" onClick={() => deleteItem(id.toString())}> 
