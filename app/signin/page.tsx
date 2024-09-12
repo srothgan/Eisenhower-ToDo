@@ -16,6 +16,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("")
   const [conPassword, setConPassword] = useState("")
   const [error, setError] = useState('');
+  const [accesscode, setAccessCode] = useState("")
   const router = useRouter(); // For navigation
 
   // Dummy sign-in method (you will replace this with your actual sign-in logic)
@@ -50,6 +51,10 @@ const SignIn = () => {
   // Dummy register method (you will replace this with your actual registration logic)
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(accesscode!=="12345678910"){
+        alert("Wrong Access Code");
+        return;
+    }
     if (password !== conPassword) {
       alert("Passwords do not match!");
       return;
@@ -102,6 +107,23 @@ const SignIn = () => {
           {/* Name field (only for registration) */}
           {!isSignIn && (
             <>
+              {/* Access Key */}
+              <div>
+                <label htmlFor="accesskey" className="block text-sm font-medium">
+                  Access key
+                </label>
+                <input
+                  type="text"
+                  id="accesskey"
+                  name="accesskey"
+                  value={accesscode}
+                  onChange={(e) => setAccessCode(e.target.value)}
+                  placeholder="Enter the Access Key"
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
+                />
+              </div>
+              
+              {/* name */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium">
                   Name
