@@ -1,8 +1,9 @@
 
-import Container from "@/components/Container";
+import Container from "../components/Container";
+
 export default function Home() {
   return (
-    <div>
+    <div className="flex flex-col">
       <Container/>
     </div>
   );

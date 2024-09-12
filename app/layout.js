@@ -1,4 +1,6 @@
 import localFont from "next/font/local";
+import Navbar from "../components/Navbar";
+import { AuthProvider } from "./providers";
 import "./globals.css";
 
 export const metadata = {
@@ -10,7 +12,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
+      <AuthProvider>
+      <Navbar/>
+      <div className="flex-1">
+              {children}
+            </div>
+        </AuthProvider>
       </body>
     </html>
   );
