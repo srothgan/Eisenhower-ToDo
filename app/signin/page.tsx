@@ -44,7 +44,7 @@ const SignIn = () => {
         // Redirect to home page if successful
         router.replace('/');
     } catch (error) {
-        console.error("Error during sign-in:", error);
+       
         setError("An unexpected error occurred. Please try again.");
     }
 };
@@ -60,7 +60,6 @@ const SignIn = () => {
       alert("Passwords do not match!");
       return;
     }
-    console.log("Registering with", name, email, role, organization, password);
     try {
       const response = await fetch('/api/user', {
         method: 'POST',
@@ -84,7 +83,7 @@ const SignIn = () => {
         alert(`Registration failed: ${data.message}`);
       }
     } catch (error) {
-      console.error('Error during registration:', error);
+    
       alert('An error occurred during registration.');
     }
   };

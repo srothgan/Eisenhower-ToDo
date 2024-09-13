@@ -19,7 +19,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import SortableContainer from "./SortableContainer";
 import Item from "./Item";
-import { FaRegSave, FaPlus  } from "react-icons/fa";
+import { FaRegSave, FaPlus, FaCheckCircle   } from "react-icons/fa";
 import SortableItem from "./SortableItem";
 
 interface TaskItem {
@@ -55,10 +55,11 @@ const Container = () => {
   const [newTask, setNewTask] = useState("");
   const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saveSuccess, setSaveSuccess] = useState(false); 
 
   const loadTasks = async () => {
     if (!session?.user?.id) {
-      console.error("User ID is not available");
+      alert("User ID is not available. Try in a few seconds again.");
       return;
     }
   
@@ -78,7 +79,6 @@ const Container = () => {
       }
       
       for (const task of fetchedTasks) {
-        console.log("print task", task)
         const newItem = {
           id: task._id,
           name: task.name,
@@ -93,7 +93,7 @@ const Container = () => {
   
       
     } catch (error) {
-      console.error("Error loading tasks:", error);
+      alert("Error loading tasks:");
     } finally {
       setLoading(false);
     }
@@ -131,7 +131,6 @@ const Container = () => {
     // Reset the input fields
     setNewTask('');
     setNewNote('');
-    console.log("Task Added:", newTask, newNote);  // Log the added task
   };
 
   const generateUniqueId = (items: Items): string => {
@@ -318,8 +317,6 @@ const Container = () => {
         },
     });
 
-    console.log(`Successfully deleted tasks for user ${userId}`);
-
     if (!deleteResponse.ok) {
         throw new Error("Failed to delete existing tasks");
     }
@@ -351,14 +348,18 @@ const Container = () => {
                     if (!response.ok) {
                         throw new Error(result.message || "Failed to save task");
                     }
-                    console.log("Task saved:", result);
                 } catch (error) {
-                    console.error('Failed to save tasks:', error);
-                    //alert('Error saving tasks.');
+                    
+                    alert('Error saving tasks.');
                 }
             }
         }
     }
+    // Set success state to true and hide it after 3 seconds
+    setSaveSuccess(true);
+    setTimeout(() => {
+      setSaveSuccess(false);
+    }, 3000);  // 3 seconds
 };
 useEffect(() => {
   if (status === "authenticated") {
@@ -379,7 +380,15 @@ return (
       alert("User ID is not available");
     }
   }} type="button" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center gap-2">
-          <p>Save Tasks</p> <FaRegSave/>
+          {saveSuccess ? (
+            <>
+              <p>Saved</p> <FaCheckCircle />
+            </>
+          ) : (
+            <>
+              <p>Save Tasks</p> <FaRegSave />
+            </>
+          )}
         </button>
       </div>
       <div className='p-2 block'>
