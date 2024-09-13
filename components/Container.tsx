@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { signOut, useSession } from "next-auth/react"
 import {
@@ -36,12 +36,7 @@ interface Items {
 const Container = () => {
  
   const [items, setItems] = useState<Items>({
-    container1: [
-      { id: '1', name: 'Do something', date: '2024-09-11', note: 'Important task' },
-      { id: '2', name: 'Do nothing', date: '2024-09-12', note: 'Take a rest' },
-      { id: '3', name: 'Eat something', date: '2024-09-13', note: 'Lunch with friends' },
-      { id: '4', name: 'Drink something', date: '2024-09-14', note: 'Stay hydrated' },
-    ],
+    container1: [],
     container2: [],
     container3: [],
     container4: [],
@@ -49,7 +44,7 @@ const Container = () => {
   });
 
   const [activeId, setActiveId] = useState<UniqueIdentifier>();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   // Find the active item based on the activeId
   const activeItem = activeId
     ? Object.values(items)
@@ -59,6 +54,52 @@ const Container = () => {
 
   const [newTask, setNewTask] = useState("");
   const [newNote, setNewNote] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const loadTasks = async () => {
+    if (!session?.user?.id) {
+      console.error("User ID is not available");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`/api/task?id=${session.user.id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch tasks");
+      }
+  
+      const fetchedData = await response.json();
+  
+      // Check if fetchedData contains a `tasks` property
+      const fetchedTasks = Array.isArray(fetchedData) ? fetchedData : fetchedData.tasks;
+      
+      if (!Array.isArray(fetchedTasks)) {
+        throw new Error("Invalid task data format");
+      }
+      
+      for (const task of fetchedTasks) {
+        console.log("print task", task)
+        const newItem = {
+          id: task._id,
+          name: task.name,
+          date: task.date,
+          note: task.note, // You can modify this as needed
+        };
+        setItems((prevItems) => ({
+          ...prevItems,                  // Spread previous state
+          [task.container]: [...prevItems[task.container], newItem],  // Add the new item to the appropriate container
+        }));
+      }
+  
+      
+    } catch (error) {
+      console.error("Error loading tasks:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
 
   // Function to add a new task
   const addTask = (event) => {
@@ -272,7 +313,7 @@ const Container = () => {
   const saveAllTasks = async (userId) => {
     // Iterate over each container key in the items object
     for (const containerKey in items) {
-        if (items.hasOwnProperty(containerKey)) {
+        if (Object.hasOwnProperty.call(items, containerKey)) {
             // Access the array of tasks within the current container
             const tasks = items[containerKey];
             // Iterate over each task within the current container
@@ -307,8 +348,16 @@ const Container = () => {
         }
     }
 };
+useEffect(() => {
+  if (status === "authenticated") {
+    loadTasks();
+  }
+}, [status])
 
-  return (
+if (loading) {
+  return <div>Loading tasks...</div>;
+}  
+return (
     <div className="flex flex-col w-full p-4">
       <div className='w-full flex justify-end p-2'>
         <button onClick={() => {
@@ -366,7 +415,7 @@ const Container = () => {
             <SortableContainer
             id="container2"
             label="Important, Not Urgent"
-            items={items.container2}
+            items={items.container2 }
             color="bg-modern-orange"
             height=" h-[250px]"
             deleteItem={deleteItem}  
@@ -374,7 +423,7 @@ const Container = () => {
             <SortableContainer
             id="container3"
             label="Important, Urgent"
-            items={items.container3}
+            items={items.container3 }
             color="bg-modern-red"
             height=" h-[250px]"
             deleteItem={deleteItem}  
@@ -382,7 +431,7 @@ const Container = () => {
             <SortableContainer
             id="container4"
             label="Not Important, Not Urgent"
-            items={items.container4}
+            items={items.container4 }
             color="bg-modern-green"
             height=" h-[250px]"
             deleteItem={deleteItem}  

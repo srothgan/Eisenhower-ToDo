@@ -7,6 +7,7 @@ export interface ITask extends Document {
   description: string;
   date: string;
   container: string; // To track if the task is completed
+  note : string
 }
 
 // Create the Task schema
@@ -21,12 +22,11 @@ const TaskSchema: Schema = new Schema<ITask>({
     required: true,
     trim: true,
   },
-  description: {
-    type: String,
-    required: false, // Optional field
-    trim: true,
-  },
   date: {
+    type: String,
+    required: true,
+  },
+  note: {
     type: String,
     required: true,
   },
