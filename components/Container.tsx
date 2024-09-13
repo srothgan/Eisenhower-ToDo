@@ -311,6 +311,18 @@ const Container = () => {
     });
   };
   const saveAllTasks = async (userId) => {
+    const deleteResponse = await fetch(`/api/task?id=${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    console.log(`Successfully deleted tasks for user ${userId}`);
+
+    if (!deleteResponse.ok) {
+        throw new Error("Failed to delete existing tasks");
+    }
     // Iterate over each container key in the items object
     for (const containerKey in items) {
         if (Object.hasOwnProperty.call(items, containerKey)) {
