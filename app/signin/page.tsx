@@ -1,65 +1,120 @@
-"use client";
-// biome-ignore lint/style/useImportType: <explanation>
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { signIn } from 'next-auth/react';
+"use client"
 
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
+import { signIn } from 'next-auth/react'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { useToast } from "@/hooks/use-toast"
 
-const SignIn = () => {
-  const [isSignIn, setIsSignIn] = useState(true); // Toggle between sign-in and register forms
-  
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [role, setRole] = useState("")
-  const [organization, setOrganization] = useState("")
-  const [password, setPassword] = useState("")
-  const [conPassword, setConPassword] = useState("")
-  const [error, setError] = useState('');
-  const [accesscode, setAccessCode] = useState("")
-  const router = useRouter(); // For navigation
+const signInSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
+})
 
-  // Dummy sign-in method (you will replace this with your actual sign-in logic)
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    
-    if (!email || !password) {
-        setError("Please enter all fields.");
-        return;
-    }
+const registerSchema = z.object({
+  accesscode: z.string().min(1, { message: "Access code is required" }),
+  name: z.string().min(1, { message: "Name is required" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  role: z.string().min(1, { message: "Role is required" }),
+  organization: z.string().min(1, { message: "Organization is required" }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+})
 
+export default function SignInPage() {
+  const [isSignIn, setIsSignIn] = useState(true)
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const signInForm = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      accesscode: "",
+      name: "",
+      email: "",
+      role: "",
+      organization: "",
+      password: "",
+      confirmPassword: "",
+    },
+  })
+
+  const onSignInSubmit = async (values: z.infer<typeof signInSchema>) => {
     try {
-        const res = await signIn('credentials', {
-            email, 
-            password, 
-            redirect: true, // Allow NextAuth.js to handle redirects
-            callbackUrl: '/', // Redirect to homepage after successful sign-in
-        });
+      const res = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      })
 
-        if (res?.error) {
-            setError("Invalid credentials");
-            return;
-        }
+      if (res?.error) {
+        toast({
+          variant: "destructive",
+          title: "Sign In Failed",
+          description: "Invalid credentials. Please try again.",
+        })
+        return
+      }
 
-        // Redirect to home page if successful
-        router.replace('/');
+      router.replace('/')
     } catch (error) {
-       
-        setError("An unexpected error occurred. Please try again.");
+      toast({
+        variant: "destructive",
+        title: "Sign In Failed",
+        description: "An unexpected error occurred. Please try again.",
+      })
     }
-};
-  
-  // Dummy register method (you will replace this with your actual registration logic)
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if(accesscode!=="12345678910"){
-        alert("Wrong Access Code");
-        return;
+  }
+
+  const onRegisterSubmit = async (values: z.infer<typeof registerSchema>) => {
+    if (values.accesscode !== "12345678910") {
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "Invalid access code.",
+      })
+      return
     }
-    if (password !== conPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+
     try {
       const response = await fetch('/api/user', {
         method: 'POST',
@@ -67,192 +122,202 @@ const SignIn = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name,
-          email,
-          password,
-          role,
-          organization,
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+          organization: values.organization,
         }),
-      });
-  
+      })
+
       if (response.ok) {
-        alert('Registration successful!');
-        setIsSignIn(true);  // Switch to sign-in form after registration
+        toast({
+          title: "Registration Successful",
+          description: "You can now sign in with your new account.",
+        })
+        setIsSignIn(true)
       } else {
-        const data = await response.json();
-        alert(`Registration failed: ${data.message}`);
+        const data = await response.json()
+        toast({
+          variant: "destructive",
+          title: "Registration Failed",
+          description: data.message || "An error occurred during registration.",
+        })
       }
     } catch (error) {
-    
-      alert('An error occurred during registration.');
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "An unexpected error occurred. Please try again.",
+      })
     }
-  };
-  
+  }
 
   return (
-    <section className="w-full flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md p-8 space-y-4 bg-slate-100 my-8 shadow-md rounded-lg">
-        <h2 className="text-center text-2xl font-bold">
-          {isSignIn ? "Sign In" : "Register"}
-        </h2>
-
-        {/* Form */}
-        <form
-          onSubmit={(e) =>
-            isSignIn ? handleSignIn(e) : handleRegister(e)
-          }
-          className="space-y-4"
-        >
-        {error && <p className="error">{error}</p>}
-          {/* Name field (only for registration) */}
-          {!isSignIn && (
-            <>
-              {/* Access Key */}
-              <div>
-                <label htmlFor="accesskey" className="block text-sm font-medium">
-                  Access key
-                </label>
-                <input
-                  type="text"
-                  id="accesskey"
-                  name="accesskey"
-                  value={accesscode}
-                  onChange={(e) => setAccessCode(e.target.value)}
-                  placeholder="Enter the Access Key"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
+    <div className="container mx-auto flex items-center justify-center min-h-screen py-8">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>{isSignIn ? "Sign In" : "Register"}</CardTitle>
+          <CardDescription>
+            {isSignIn
+              ? "Enter your credentials to access your account"
+              : "Create a new account to get started"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isSignIn ? (
+            <Form {...signInForm}>
+              <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4">
+                <FormField
+                  control={signInForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              
-              {/* name */}
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
+                <FormField
+                  control={signInForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Enter your password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full">Sign In</Button>
+              </form>
+            </Form>
+          ) : (
+            <Form {...registerForm}>
+              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                <FormField
+                  control={registerForm.control}
+                  name="accesscode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Access Code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter the access code" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
                   name="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-
-              {/* Role selection */}
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium">
-                  Role
-                </label>
-                <select
-                  id="role"
+                <FormField
+                  control={registerForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
                   name="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
-                >
-                  <option value="" disabled selected>Choose Role</option>
-                  <option value="employee">Employee</option>
-                  <option value="lecturer">Lecturer</option>
-                  <option value="student">Student</option>
-                </select>
-              </div>
-
-              {/* Organization input */}
-              <div>
-                <label htmlFor="organization" className="block text-sm font-medium">
-                  Organization
-                </label>
-                <input
-                  type="text"
-                  id="organization"
-                  name="organization"
-                  value={organization}
-                  onChange={(e) => setOrganization(e.target.value)}
-                  placeholder="Enter your organization"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="employee">Employee</SelectItem>
+                          <SelectItem value="lecturer">Lecturer</SelectItem>
+                          <SelectItem value="student">Student</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-            </>
+                <FormField
+                  control={registerForm.control}
+                  name="organization"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Organization</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your organization" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Enter your password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Confirm your password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full">Register</Button>
+              </form>
+            </Form>
           )}
-
-          {/* Email field */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
-              required
-            />
-          </div>
-
-          {/* Password field */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
-              required
-            />
-          </div>
-
-          {/* Confirm Password field (only for registration) */}
-          {!isSignIn && (
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={conPassword}
-                onChange={(e) => setConPassword(e.target.value)}
-                placeholder="Confirm your password"
-                className="w-full p-2 mt-1 border border-gray-300 rounded-lg"
-                required
-              />
-            </div>
-          )}
-
-          {/* Submit button */}
-          <button
-            type="submit"
-            className="w-full py-2 mt-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-          >
-            {isSignIn ? "Sign In" : "Register"}
-          </button>
-        </form>
-
-        {/* Toggle button */}
-        <div className="text-center">
-          <button
-            type="button"
+        </CardContent>
+        <CardFooter>
+          <Button
+            variant="link"
+            className="w-full"
             onClick={() => setIsSignIn(!isSignIn)}
-            className="text-blue-500 hover:underline"
           >
             {isSignIn
               ? "Don't have an account? Register"
               : "Already have an account? Sign In"}
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-};
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  )
+}
 
-export default SignIn;
