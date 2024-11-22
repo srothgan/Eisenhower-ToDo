@@ -10,8 +10,7 @@ export default withAuth({
 // Configure matcher to apply middleware to specific routes
 export const config = {
   matcher: [ 
-    '/',                 
-    '/personal',    
-    '/about', 
+    //all pages are visible
+    //just with reduced functionality 
   ],
 };

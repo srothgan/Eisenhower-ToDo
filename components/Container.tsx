@@ -21,6 +21,7 @@ import SortableContainer from "./SortableContainer";
 import Item from "./Item";
 import { FaRegSave, FaPlus, FaCheckCircle   } from "react-icons/fa";
 import SortableItem from "./SortableItem";
+import { set } from "mongoose";
 
 interface TaskItem {
   id: string;
@@ -58,8 +59,9 @@ const Container = () => {
   const [saveSuccess, setSaveSuccess] = useState(false); 
 
   const loadTasks = async () => {
-    if (!session?.user?.id) {
-      alert("User ID is not available. Try in a few seconds again.");
+    if (!session) {
+      console.log("User ID is not available. Try in a few seconds again.");
+      setLoading(false);
       return;
     }
   
@@ -361,10 +363,9 @@ const Container = () => {
       setSaveSuccess(false);
     }, 3000);  // 3 seconds
 };
+// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 useEffect(() => {
-  if (status === "authenticated") {
     loadTasks();
-  }
 }, [status])
 
 if (loading) {
@@ -374,14 +375,14 @@ return (
     <div className="flex flex-col w-full p-4">
       <div className='w-full flex justify-end p-2'>
         <button onClick={() => {
-    if (session?.user?.id) {
-      saveAllTasks(session.user.id);
-    } else {
-      alert("User ID is not available");
-    }
-  }} type="button" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center gap-2">
-          {saveSuccess ? (
-            <>
+          if (session?.user?.id) {
+            saveAllTasks(session.user.id);
+          } else {
+            alert("User ID is not available");
+          }
+          }} type="button" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center gap-2">
+            {saveSuccess ? (
+                  <>
               <p>Saved</p> <FaCheckCircle />
             </>
           ) : (
