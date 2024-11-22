@@ -1,33 +1,45 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import type { UniqueIdentifier } from "@dnd-kit/core";
-import Item from "./Item";
-import React from "react";
-import { RxDragHandleDots2 } from "react-icons/rx";
-import { FaRegCircle } from "react-icons/fa";
+import React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { FaRegCircle, FaTrashAlt } from 'react-icons/fa';
 
-const SortableItem = ({ id, name, note, date,deleteItem }: { 
-  id: UniqueIdentifier, 
-  name: string, 
-  note: string, 
-  date: string,
-  deleteItem: (id: string) => void  // Add deleteItem function type
-}) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
+const SortableItem = ({ id, name, note, date, deleteItem }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+  // Format the date using Intl.DateTimeFormat
+  const formattedDate = date
+  .split("T")[0]
+  .split("-")
+  .reverse()
+  .join(".");
 
   return (
     <div
       ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition, touchAction: 'none' }}
-      className="w-full flex items-center justify-between my-2 px-4 py-2 bg-slate-200 h-fit"
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        touchAction: 'none',
+      }}
+      className="w-full flex items-center justify-between my-2 p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300"
     >
-      <button type="button" onClick={() => deleteItem(id.toString())}> 
-      <FaRegCircle />
-    </button>
-      {/* Pass id, name, note, and date to Item */}
-      <Item id={id} name={name} note={note} date={date} />
-      <button {...attributes} {...listeners}><RxDragHandleDots2/></button>
+
+      {/* Item Content */}
+      <div className="flex-1 flex flex-col px-2" {...attributes} {...listeners}>
+        <p className="text-md font-semibold text-gray-800">{name}</p>
+        <p className="text-sm text-gray-600">{note}</p>
+        <p className="text-xs text-gray-500">Created at: {formattedDate}</p>
+      </div>
+
+      {/* Delete Button */}
+      <button
+        type="button"
+        onClick={() => deleteItem(id.toString())}
+        className="text-red-500 hover:text-red-700 transition-colors duration-200"
+        aria-label="Delete item"
+      >
+        <FaTrashAlt />
+      </button>
     </div>
   );
 };

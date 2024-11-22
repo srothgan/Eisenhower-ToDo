@@ -18,7 +18,6 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import SortableContainer from "./SortableContainer";
-import Item from "./Item";
 import { FaRegSave, FaPlus, FaCheckCircle   } from "react-icons/fa";
 import SortableItem from "./SortableItem";
 import { set } from "mongoose";
