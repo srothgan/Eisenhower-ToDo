@@ -21,13 +21,13 @@ const SortableContainer = ({
     id,
   });
   return (
-    <div className={`w-full ${color} text-black p-2 `}>
+    <div className={`w-full ${color} p-1 md:p-2`}>
       <div className=' pt-2'>
-        <h3 className="text-xl font-bold text-center">{label}</h3>
+        <h3 className="text-xl font-bold text-center text-label-gray">{label}</h3>
       </div>
       
       <SortableContext id={id} items={items.map((item) => item.id)} strategy={rectSortingStrategy}>
-        <div ref={setNodeRef} className={`w-full ${height} overflow-auto`}>
+        <div ref={setNodeRef} className={`w-full h-[300px] md:h-[250px] lg:h-[300px] overflow-auto`}>
           {items.map((item) => (
             <SortableItem 
               key={item.id} 

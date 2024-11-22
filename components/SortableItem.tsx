@@ -21,11 +21,11 @@ const SortableItem = ({ id, name, note, date, deleteItem }) => {
         transition,
         touchAction: 'none',
       }}
-      className="w-full flex items-center justify-between my-2 p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300"
+      className="w-full flex items-center justify-between my-1 md:my-2 py-1 md:py-2 px-2 md:px-4 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300"
     >
 
       {/* Item Content */}
-      <div className="flex-1 flex flex-col px-2" {...attributes} {...listeners}>
+      <div className="flex-1 flex flex-col pr-2" {...attributes} {...listeners}>
         <p className="text-md font-semibold text-gray-800">{name}</p>
         <p className="text-sm text-gray-600">{note}</p>
         <p className="text-xs text-gray-500">Created at: {formattedDate}</p>

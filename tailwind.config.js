@@ -9,10 +9,11 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
-  			'modern-orange': '#FFA26B',
-  			'modern-red': '#E85A4F',
-  			'modern-green': '#82B284',
-  			'modern-blue': '#5A99D3',
+  			'modern-orange': '#D97706',
+  			'modern-red': '#B91C1C',
+  			'modern-green': '#047857',
+  			'modern-blue': '#2563EB',
+			'label-gray:': '#4B5563',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

@@ -40,7 +40,6 @@ const Container = () => {
     container2: [],
     container3: [],
     container4: [],
-    container5: [],
   });
 
   const [activeId, setActiveId] = useState<UniqueIdentifier>();
@@ -56,6 +55,7 @@ const Container = () => {
   const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false); 
+  const containerHeight = "h-[200px] md:h-[250px] lg:h-[300px]";
 
   const loadTasks = async () => {
     if (!session) {
@@ -100,8 +100,6 @@ const Container = () => {
     }
   };
   
-  
-
   // Function to add a new task
   const addTask = (event) => {
     event.preventDefault();  // Prevent page reload
@@ -117,8 +115,8 @@ const Container = () => {
     setItems((prevItems) => {
       return {
         ...prevItems,
-        container1: [
-          ...prevItems.container1,
+        container3: [
+          ...prevItems.container3,
           {
             id: newId,
             name: newTask,
@@ -157,7 +155,6 @@ const Container = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
  
   const findContainer = (id: UniqueIdentifier) => {
     // First check if the id matches a container key itself
@@ -243,8 +240,6 @@ const Container = () => {
     });
   };
   
-
- 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
@@ -310,6 +305,7 @@ const Container = () => {
       };
     });
   };
+
   const saveAllTasks = async (userId) => {
     const deleteResponse = await fetch(`/api/task?id=${userId}`, {
         method: 'DELETE',
@@ -371,17 +367,15 @@ if (loading) {
   return <div>Loading tasks...</div>;
 }  
 return (
-    <div className="flex flex-col w-full p-4">
+    <div className="flex flex-col w-full p-1 md:p-2 xl:p-4">
       <div className='w-full flex justify-end p-2'>
-        <button onClick={() => {
-          if (session?.user?.id) {
-            saveAllTasks(session.user.id);
-          } else {
-            alert("User ID is not available");
-          }
-          }} type="button" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center gap-2">
-            {saveSuccess ? (
-                  <>
+        <button
+          type="submit"
+          className="w-fit sm:w-auto bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-blue-600 transition-all duration-300"
+          onClick={() => {saveAllTasks(session.user.id)}}
+        >
+          {saveSuccess ? (
+            <>
               <p>Saved</p> <FaCheckCircle />
             </>
           ) : (
@@ -390,28 +384,6 @@ return (
             </>
           )}
         </button>
-      </div>
-      <div className='p-2 block'>
-        <h3 className="text-xl font-bold text-center">Create new Task</h3>
-        <form onSubmit={addTask} className="w-full flex flex-col md:flex-row gap-4 pt-2">
-            <input
-                type="text"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Enter a name"
-                className="w-full p-3 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-            />
-            <input
-              type="text"
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              placeholder="Enter a note"
-              className="w-full p-3 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-            />
-            <button type="submit" className="w-full md:w-fit bg-blue-500 text-white p-2 rounded-lg border-2 border-gray-300 flex items-center justify-center">
-              <FaPlus/>
-            </button>
-        </form>
       </div>  
       <div className='w-full block md:flex'>
       <DndContext
@@ -421,48 +393,81 @@ return (
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        {/* SortableContainer */}
+        {/* Form to create tasks */}
         <div className='w-full md:w-1/3 block p-2 '>
+          <h3 className="text-2xl font-bold text-center text-gray-800">Create New Task</h3>
+          <form onSubmit={addTask} className="w-full flex flex-col gap-6 pt-4 px-6">
+            {/* Task Name Input */}
+            <div className="flex flex-col">
+              <label htmlFor="taskName" className="text-sm font-medium text-gray-700">
+                Task Name
+              </label>
+              <input
+                type="text"
+                id="taskName"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                placeholder="Enter task name"
+                className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors placeholder-gray-400"
+              />
+            </div>
+
+            {/* Task Note Input */}
+            <div className="flex flex-col">
+              <label htmlFor="taskNote" className="text-sm font-medium text-gray-700">
+                Task Note
+              </label>
+              <input
+                type="text"
+                id="taskNote"
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                placeholder="Enter task details"
+                className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors placeholder-gray-400"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full sm:w-auto bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-blue-600 transition-all duration-300"
+            >
+              <p>Create Task</p>
+              <FaPlus />
+            </button>
+          </form>
+        </div>
+        <div className='w-full md:w-2/3 grid grid-cols-2 p-2 rounded-xl'>
             <SortableContainer
             id="container1"
-            items={items.container1}
-            label="Unassigned"
-            color="bg-white"
-            height="h-[250px] md:h-[550px]"
+            label="Important, Not Urgent"
+            items={items.container1 }
+            color="bg-modern-orange"
+            height={containerHeight}
             deleteItem={deleteItem}  
             />
-        </div>
-        <div className='w-full md:w-2/3 flex flex-col md:grid grid-cols-2 p-2 rounded-xl'>
             <SortableContainer
             id="container2"
-            label="Important, Not Urgent"
+            label="Important, Urgent"
             items={items.container2 }
-            color="bg-modern-orange"
-            height=" h-[250px]"
+            color="bg-modern-red"
+            height={containerHeight}
             deleteItem={deleteItem}  
             />
             <SortableContainer
             id="container3"
-            label="Important, Urgent"
+            label="Not Important, Not Urgent"
             items={items.container3 }
-            color="bg-modern-red"
-            height=" h-[250px]"
+            color="bg-modern-green"
+            height={containerHeight}
             deleteItem={deleteItem}  
             />
             <SortableContainer
             id="container4"
-            label="Not Important, Not Urgent"
-            items={items.container4 }
-            color="bg-modern-green"
-            height=" h-[250px]"
-            deleteItem={deleteItem}  
-            />
-            <SortableContainer
-            id="container5"
             label="Not Important, Urgent"
-            items={items.container5}
+            items={items.container4}
             color="bg-modern-blue"
-            height=" h-[250px]"
+            height={containerHeight}
             deleteItem={deleteItem}  
             />
         </div>
