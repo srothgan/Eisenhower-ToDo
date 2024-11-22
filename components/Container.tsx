@@ -20,7 +20,10 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import SortableContainer from "./SortableContainer";
 import { FaRegSave, FaPlus, FaCheckCircle   } from "react-icons/fa";
 import SortableItem from "./SortableItem";
-import { set } from "mongoose";
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
 interface TaskItem {
   id: string;
@@ -55,11 +58,18 @@ const Container = () => {
   const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false); 
-  const containerHeight = "h-[200px] md:h-[250px] lg:h-[300px]";
-
+  const { toast } = useToast();
   const loadTasks = async () => {
     if (!session) {
-      console.log("User ID is not available. Try in a few seconds again.");
+      toast({
+        title: "Couldn't load tasks.",
+        description: "Please sign in to load your tasks.",
+        action: <ToastAction className='border-0' altText="Try again">
+        <Button variant="default">
+          <Link href='/signin'>Sign In</Link>
+        </Button>
+      </ToastAction>,
+      })
       setLoading(false);
       return;
     }
@@ -94,7 +104,11 @@ const Container = () => {
   
       
     } catch (error) {
-      alert("Error loading tasks:");
+      toast({
+        title: "Failed to load tasks",
+        description: error.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -306,7 +320,20 @@ const Container = () => {
     });
   };
 
-  const saveAllTasks = async (userId) => {
+  const saveAllTasks = async () => {
+    if (!session) {
+      toast({
+        title: "You can't save tasks.",
+        description: "Please sign in to save your tasks.",
+        action: <ToastAction className='border-0' altText="Try again">
+          <Button variant="default">
+            <Link href='/signin'>Sign In</Link>
+          </Button>
+        </ToastAction>,
+      })
+      return;
+    }
+    const userId = session.user.id;
     const deleteResponse = await fetch(`/api/task?id=${userId}`, {
         method: 'DELETE',
         headers: {
@@ -346,17 +373,20 @@ const Container = () => {
                         throw new Error(result.message || "Failed to save task");
                     }
                 } catch (error) {
-                    
-                    alert('Error saving tasks.');
+                    toast({
+                        title: "Failed to save tasks",
+                        description: error.message,
+                        variant: "destructive",
+                    });
+                    return;
                 }
             }
         }
     }
-    // Set success state to true and hide it after 3 seconds
-    setSaveSuccess(true);
-    setTimeout(() => {
-      setSaveSuccess(false);
-    }, 3000);  // 3 seconds
+    toast({
+      title: "Successfully saved tasks",
+      description: "All tasks have been saved successfully.",
+    })
 };
 // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 useEffect(() => {
@@ -372,7 +402,7 @@ return (
         <button
           type="submit"
           className="w-fit sm:w-auto bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-blue-600 transition-all duration-300"
-          onClick={() => {saveAllTasks(session.user.id)}}
+          onClick={() => {saveAllTasks();}}
         >
           {saveSuccess ? (
             <>
@@ -443,7 +473,6 @@ return (
             label="Important, Not Urgent"
             items={items.container1 }
             color="bg-modern-orange"
-            height={containerHeight}
             deleteItem={deleteItem}  
             />
             <SortableContainer
@@ -451,7 +480,6 @@ return (
             label="Important, Urgent"
             items={items.container2 }
             color="bg-modern-red"
-            height={containerHeight}
             deleteItem={deleteItem}  
             />
             <SortableContainer
@@ -459,7 +487,6 @@ return (
             label="Not Important, Not Urgent"
             items={items.container3 }
             color="bg-modern-green"
-            height={containerHeight}
             deleteItem={deleteItem}  
             />
             <SortableContainer
@@ -467,7 +494,6 @@ return (
             label="Not Important, Urgent"
             items={items.container4}
             color="bg-modern-blue"
-            height={containerHeight}
             deleteItem={deleteItem}  
             />
         </div>

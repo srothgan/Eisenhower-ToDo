@@ -33,12 +33,12 @@ export function Navbar() {
               <span className="text-xl font-bold text-gray-800">Eisenhower ToDo</span>
             </Link>
           </div>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.key}
                 href={link.url}
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors"
               >
                 {link.name}
               </Link>
@@ -51,8 +51,8 @@ export function Navbar() {
                 Logout
               </Button>
             ):(
-              <Link href="/signin" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                <Button variant="link">Login</Button>
+              <Link href="/signin" className="text-gray-600 hover:text-gray-900 rounded-md text-sm font-medium transition-colors">
+                Login
               </Link>
             )}
           </div>

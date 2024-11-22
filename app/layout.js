@@ -1,4 +1,4 @@
-import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/toaster"
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthProvider } from "./providers";
@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
         <div className="flex-1 min-h-screen">
               {children}
         </div>
+        <Toaster />
         <Footer/>
       </AuthProvider>
       </body>
