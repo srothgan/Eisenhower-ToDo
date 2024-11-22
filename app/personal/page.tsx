@@ -13,7 +13,7 @@ export default function PersonalPage() {
 
   if (!session) {
     return (
-      <div className="container mx-auto py-8 px-4">
+      <div className="container max-w-7xl mx-auto py-8 px-1 md:px-2 xl:px-4">
         <Alert variant="destructive" className="mb-4 bg-red-200 text-red-600">
           <AlertTitle className="text-lg font-bold">Not logged in!!!</AlertTitle>
           <AlertDescription className="text-base font-semibold">

@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 export function Footer() {
   return (
     <footer className="bg-white shadow-[0_-5px_15px_-3px_rgba(0,0,0,0.1)] py-6">
-      <div className="container mx-auto px-4">
+      <div className="container max-w-7xl mx-auto px-1 md:px-2 xl:px-4">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-gray-600">
             Created by Simon Peter Rothgang

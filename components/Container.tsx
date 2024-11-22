@@ -367,7 +367,7 @@ if (loading) {
   return <div>Loading tasks...</div>;
 }  
 return (
-    <div className="flex flex-col w-full p-1 md:p-2 xl:p-4">
+    <div className="flex flex-col w-full px-1 md:px-2 xl:px-4 py-4">
       <div className='w-full flex justify-end p-2'>
         <button
           type="submit"

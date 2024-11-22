@@ -7,12 +7,6 @@ import { Menu, X, ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -32,7 +26,7 @@ export function Navbar() {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-1 md:px-2 xl:px-4">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
@@ -49,13 +43,17 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            {session && (
+            {session ? (
               <Button
                 variant="destructive"
                 onClick={() => signOut()}
               >
                 Logout
               </Button>
+            ):(
+              <Link href="/signin" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <Button variant="link">Login</Button>
+              </Link>
             )}
           </div>
           <div className="flex items-center md:hidden">
@@ -81,7 +79,7 @@ export function Navbar() {
                       {link.name}
                     </Link>
                   ))}
-                  {session && (
+                  {session ? (
                     <Button
                       variant="destructive"
                       onClick={() => {
@@ -91,7 +89,11 @@ export function Navbar() {
                     >
                       Logout
                     </Button>
-                  )}
+                  ):(
+                  <Link href="/signin" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    <Button variant="link">Login</Button>
+                  </Link>
+                )}
                 </div>
               </SheetContent>
             </Sheet>
