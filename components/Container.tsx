@@ -60,7 +60,7 @@ const Container = () => {
   const [saveSuccess, setSaveSuccess] = useState(false); 
   const { toast } = useToast();
   const loadTasks = async () => {
-    if (!session) {
+    if (!session.user) {
       toast({
         title: "Couldn't load tasks.",
         description: "Please sign in to load your tasks.",
@@ -388,10 +388,23 @@ const Container = () => {
       description: "All tasks have been saved successfully.",
     })
 };
-// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+
 useEffect(() => {
+  if (session) {
     loadTasks();
-}, [status])
+  } else {
+    setLoading(false); 
+    toast({
+      title: "Couldn't load tasks.",
+      description: "Please sign in to load your tasks.",
+      action: <ToastAction className='border-0' altText="Try again">
+      <Button variant="default">
+        <Link href='/signin'>Sign In</Link>
+      </Button>
+    </ToastAction>,
+    })
+  }
+}, [status, session]);
 
 if (loading) {
   return <div>Loading tasks...</div>;

@@ -70,7 +70,7 @@ export default function AboutPage() {
         </CardHeader>
         <CardContent>
           <p className="mb-4">
-            We welcome contributions from the community! Whether you're a designer, developer, or just have great ideas, your input can help make Eisenhower Todo even better.
+            We welcome contributions from the community! Whether you&apos;re a designer, developer, or just have great ideas, your input can help make Eisenhower Todo even better.
           </p>
           <p>
             Visit our GitHub repository to learn more about how you can contribute:
