@@ -90,8 +90,12 @@ export function Navbar() {
                       Logout
                     </Button>
                   ):(
-                  <Link href="/signin" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                    <Button variant="link">Login</Button>
+                  <Link 
+                    href="/signin" 
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    onClick={() => setIsOpen(false)}
+                    >
+                    Login
                   </Link>
                 )}
                 </div>
