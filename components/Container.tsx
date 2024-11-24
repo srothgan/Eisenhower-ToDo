@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import { signOut, useSession } from "next-auth/react"
 import {
   DndContext,
@@ -21,9 +20,6 @@ import SortableContainer from "./SortableContainer";
 import { FaRegSave, FaPlus, FaCheckCircle   } from "react-icons/fa";
 import SortableItem from "./SortableItem";
 import { useToast } from "@/hooks/use-toast"
-import { ToastAction } from "@/components/ui/toast"
-import { Button } from "@/components/ui/button"
-import Link from "next/link";
 
 interface TaskItem {
   id: string;
@@ -59,17 +55,13 @@ const Container = () => {
   const [loading, setLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false); 
   const { toast } = useToast();
+
   const loadTasks = async () => {
-    if (!session.user) {
+    if (!session?.user) {
       toast({
-        title: "Couldn't load tasks.",
-        description: "Please sign in to load your tasks.",
-        action: <ToastAction className='border-0' altText="Try again">
-        <Button variant="default">
-          <Link href='/signin'>Sign In</Link>
-        </Button>
-      </ToastAction>,
-      })
+        title: "You are not logged in.",
+        description: "Sign in to load and save tasks.",
+      });
       setLoading(false);
       return;
     }
@@ -84,11 +76,12 @@ const Container = () => {
   
       // Check if fetchedData contains a `tasks` property
       const fetchedTasks = Array.isArray(fetchedData) ? fetchedData : fetchedData.tasks;
-      
+  
       if (!Array.isArray(fetchedTasks)) {
         throw new Error("Invalid task data format");
       }
-      
+  
+      // Iterate through fetched tasks
       for (const task of fetchedTasks) {
         const newItem = {
           id: task._id,
@@ -96,13 +89,25 @@ const Container = () => {
           date: task.date,
           note: task.note, // You can modify this as needed
         };
-        setItems((prevItems) => ({
-          ...prevItems,                  // Spread previous state
-          [task.container]: [...prevItems[task.container], newItem],  // Add the new item to the appropriate container
-        }));
-      }
   
-      
+        setItems((prevItems) => {
+          const containerTasks = prevItems[task.container] || [];
+  
+          // Check if the task ID already exists in the current container
+          const taskExists = containerTasks.some((item) => item.id === task._id);
+  
+          // If the task does not exist, add it to the container
+          if (!taskExists) {
+            return {
+              ...prevItems,
+              [task.container]: [...containerTasks, newItem],
+            };
+          }
+  
+          // If the task exists, return the state as is
+          return prevItems;
+        });
+      }
     } catch (error) {
       toast({
         title: "Failed to load tasks",
@@ -325,11 +330,6 @@ const Container = () => {
       toast({
         title: "You can't save tasks.",
         description: "Please sign in to save your tasks.",
-        action: <ToastAction className='border-0' altText="Try again">
-          <Button variant="default">
-            <Link href='/signin'>Sign In</Link>
-          </Button>
-        </ToastAction>,
       })
       return;
     }
@@ -395,13 +395,8 @@ useEffect(() => {
   } else {
     setLoading(false); 
     toast({
-      title: "Couldn't load tasks.",
-      description: "Please sign in to load your tasks.",
-      action: <ToastAction className='border-0' altText="Try again">
-      <Button variant="default">
-        <Link href='/signin'>Sign In</Link>
-      </Button>
-    </ToastAction>,
+      title: "You are not logged in.",
+      description: "Sign in to load and save tasks.",
     })
   }
 }, [status, session]);
